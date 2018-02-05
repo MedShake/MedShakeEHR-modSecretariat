@@ -1,0 +1,67 @@
+{#
+ # This file is part of MedShakeEHR.
+ #
+ # Copyright (c) 2017
+ # Bertrand Boutillier <b.boutillier@gmail.com>
+ # http://www.medshake.net
+ #
+ # MedShakeEHR is free software: you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+ # the Free Software Foundation, either version 3 of the License, or
+ # any later version.
+ #
+ # MedShakeEHR is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License
+ # along with MedShakeEHR.  If not, see <http://www.gnu.org/licenses/>.
+ #/
+
+/##
+ # Template > patient : tableau de gestion synthèse
+ #
+ # @author Bertrand Boutillier <b.boutillier@gmail.com>
+ # @contrib fr33z00 <https://github.com/fr33z00>
+ #}
+
+{% import "macroForm.html.twig" as f %}
+<div class="row changeObserv" id="synthesePatient" style="">
+
+    <div class="jumbotron">
+
+                {% if page.synthFormNames|length > 1 %}
+                  <ul class="nav nav-tabs" role="tablist">
+                    {% set z=0 %}
+                    {% for k,v in page.synthFormNames %}
+                      <li role="presentation" {%if z==0 %}class="active"{% endif %}>
+                        <a href="#tab{{ v }}" aria-controls="tab{{ v }}" role="tab" data-toggle="tab" style="background-color:transparent !important"
+                        onclick="setTimeout((function(){$('#formName_{{ v }} textarea').each(function(idx,el){if(el.value!='')auto_grow(el)})}),5)">{{ k }}</a>
+                      </li>
+                      {% set z=1 %}
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+                {% if page.synthFormNames|length > 1 %}
+                  <div class="tab-content" style="padding-top:12px">
+                    {% set z=0 %}
+                    {% for k,v in page.synthFormNames %}
+                      <div role="tabpanel" class="tab-pane{% if z==0 %} active{% endif %}" id="tab{{ v }}">
+                        <div id="latForm" class=" changeObserv">
+                          {{ f.formbuilder(page.synthFormDatas[k] , v ) }}
+                        </div>
+                      </div>
+                      {% set z=1 %}
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  {% for k,v in page.synthFormNames %}
+                    <div id="latForm" class=" changeObserv">
+                      {{ f.formbuilder(page.synthFormDatas[k] , v) }}
+                    </div>
+                  {% endfor %}
+                {% endif %}
+    </div>
+
+</div>
