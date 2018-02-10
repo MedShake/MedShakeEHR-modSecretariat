@@ -58,5 +58,6 @@ $reglements=$data->getDataTypesFromCatName('porteursReglement', array('name', 'm
 foreach ($reglements as $v) {
     $p['page']['formReglement'][$v['name']]=array('module'=>$v['module'], 'form'=>$v['formValues']);
 }
+$p['page']['formOrdo']['ordoPorteur']=array('module'=>'base', 'form'=>'');
 
 
