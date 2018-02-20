@@ -1,3 +1,5 @@
 default:
-	zip -r MadeShakeEHR-modGynObs.zip . -x .git\*
+	zip -r MedShakeEHR-modSecretariat.zip . -x .git\* -x Makefile
 
+clean:
+	rm -f MedShakeEHR-modSecretariat.zip
