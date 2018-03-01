@@ -1,5 +1,5 @@
 **Les informations ci-dessous sont une rapide introduction purement technique ! 
-Consultez [www.logiciel-cabinet-medical.fr](http://www.logiciel-cabinet-medical.fr/) pour toutes les informations sur le logiciel MedShakeEHR et son module Chiropraxie !**
+Consultez [www.logiciel-cabinet-medical.fr](http://www.logiciel-cabinet-medical.fr/) pour toutes les informations sur le logiciel MedShakeEHR et son module Secrétariat !**
 
 # MedShakeEHR-modSecretariat
 Module Secrétariat pour MedShakeEHR
