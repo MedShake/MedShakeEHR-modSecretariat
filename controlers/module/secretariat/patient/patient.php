@@ -35,14 +35,14 @@ $p['page']['atcdFormNames']=array();
 $p['page']['atcdFormDatas']=array();
 foreach ($atcd as $v) {
     $form->setFormIDbyName($p['page']['atcdFormNames'][$v['module']]=$v['name']);
-    $form->getPrevaluesForPatient($match['params']['patient']);
+    $form->getPrevaluesForPatient($p['page']['patient']['id']);
     $p['page']['atcdFormDatas'][$v['module']]=$form->getForm();
 }
 $p['page']['synthFormNames']=array();
 $p['page']['synthFormDatas']=array();
 foreach ($synth as $v) {
     $form->setFormIDbyName($p['page']['synthFormNames'][$v['module']]=$v['name']);
-    $form->getPrevaluesForPatient($match['params']['patient']);
+    $form->getPrevaluesForPatient($p['page']['patient']['id']);
     $p['page']['synthFormDatas'][$v['module']]=$form->getForm();
 }
 
