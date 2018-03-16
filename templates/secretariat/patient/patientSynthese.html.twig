@@ -29,30 +29,26 @@
 {% import "macroForm.html.twig" as f %}
 <div class="row changeObserv" id="synthesePatient" style="">
 
-    <div class="jumbotron">
+    <div class="jumbotron col-md-12 col-md-12">
 
                 {% if page.synthFormNames|length > 1 %}
                   <ul class="nav nav-tabs" role="tablist">
-                    {% set z=0 %}
                     {% for k,v in page.synthFormNames %}
-                      <li role="presentation" {%if z==0 %}class="active"{% endif %}>
-                        <a href="#tab{{ v }}" aria-controls="tab{{ v }}" role="tab" data-toggle="tab" style="background-color:transparent !important"
+                      <li role="presentation" class="nav-item">
+                        <a class="nav-link{% if loop.first %} active{% endif %}" href="#tab{{ v }}" aria-controls="tab{{ v }}" role="tab" data-toggle="tab" style="background-color:transparent !important"
                         onclick="setTimeout((function(){$('#formName_{{ v }} textarea').each(function(idx,el){if(el.value!='')auto_grow(el)})}),5)">{{ k }}</a>
                       </li>
-                      {% set z=1 %}
                     {% endfor %}
                   </ul>
                 {% endif %}
                 {% if page.synthFormNames|length > 1 %}
                   <div class="tab-content" style="padding-top:12px">
-                    {% set z=0 %}
                     {% for k,v in page.synthFormNames %}
-                      <div role="tabpanel" class="tab-pane{% if z==0 %} active{% endif %}" id="tab{{ v }}">
+                      <div role="tabpanel" class="tab-pane{% if loop.first %} active{% endif %}" id="tab{{ v }}">
                         <div id="latForm" class=" changeObserv">
                           {{ f.formbuilder(page.synthFormDatas[k] , v ) }}
                         </div>
                       </div>
-                      {% set z=1 %}
                     {% endfor %}
                   </div>
                 {% else %}

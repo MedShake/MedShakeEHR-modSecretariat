@@ -70,7 +70,7 @@
         {% if page.patient.dossierType =="deleted" %}
         <div class="row alert alert-danger" role="alert">Ce dossier est marqué comme supprimé !</div>
         {% endif %}
-        <div class="row" id="identitePatient" data-genre="{{ page.patient.administrativeDatas.14 }}" data-patientID="{{ page.patient.id }}">
+        <div id="identitePatient" data-genre="{{ page.patient.administrativeDatas.administrativeGenderCode.value }}" data-patientID="{{ page.patient.id }}">
 
             {% include('inc-ajax-patientAdminData.html.twig') %}
 
@@ -80,14 +80,13 @@
 
           {% if config.secretariatPeutCreerConsult %}
             <div class="btn-group">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn btn-primary dropdown-toggle m-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Consultation
-                    <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
                   {% for v in page.typeCs_csSecretariat %}
                     <li>
-                      <a id="linkAddNewCs{{ v.id }}" class="newCS" data-parentID='0' data-formtocall="{{ v.formValues }}" data-csID="{{ v.id }}" data-mode="create" href="#">{{ v.module }} : {{ v.label|e }}</a>
+                      <a id="linkAddNewCs{{ v.id }}" class="dropdown-item newCS" data-parentID='0' data-formtocall="{{ v.formValues }}" data-csID="{{ v.id }}" data-mode="create" href="#">{{ v.module }} : {{ v.label|e }}</a>
                     </li>
                   {% endfor %}
                 </ul>
@@ -96,14 +95,13 @@
 
           {% if config.secretariatPeutCreerOrdo %}
             <div class="btn-group">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn btn-primary dropdown-toggle m-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Ordonnance
-                    <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
                   <li>
                     {% for k,v in page.formOrdo %}
-                      <a id="linkAddNewOrdo" data-porteur="{{ k }}" data-module="{{ v.module }}" data-ordoForm="{{ v.form }}" href="#">{{ v.module }} : Nouvelle prescription</a>
+                      <a class="dropdown-item" id="linkAddNewOrdo" data-porteur="{{ k }}" data-module="{{ v.module }}" data-ordoForm="{{ v.form }}" href="#">{{ v.module }} : Nouvelle prescription</a>
                     {% endfor %}
                   </li>
                 </ul>
@@ -111,53 +109,50 @@
           {% endif %}
 
             <div class="btn-group">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn btn-primary dropdown-toggle m-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Courriers &amp; Certificats
-                    <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
                     <li class="dropdown-header">Certificats</li>
                     {% for v in page.modelesCertif %}
                         <li>
-                            <a class="newCourrier" data-modeleID="{{ v.id }}" href="#">{{ v.label }}</a>
+                            <a class="dropdown-item" class="newCourrier" data-modeleID="{{ v.id }}" href="#">{{ v.label }}</a>
                         </li>
                     {% endfor %}
-                    <li role="separator" class="divider"></li>
+                    <li role="separator" class="dropdown-divider"></li>
                     <li class="dropdown-header">Courriers</li>
                     {% for v in page.modelesCourrier %}
                         <li>
-                            <a class="newCourrier" data-modeleID="{{ v.id }}" href="#">{{ v.label }}</a>
+                            <a class="dropdown-item newCourrier" data-modeleID="{{ v.id }}" href="#">{{ v.label }}</a>
                         </li>
                     {% endfor %}
                 </ul>
             </div>
 
             <div class="btn-group">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn btn-primary dropdown-toggle m-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Document
-                    <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
                     <li>
-                        <a id="linkAddNewDoc" href="#">Ajouter un document au dossier</a>
+                        <a class="dropdown-item" id="linkAddNewDoc" href="#">Ajouter un document au dossier</a>
                     </li>
                     {% if config.dicomHost=='' %}
                       <li>
-                          <a class="prepareReceptionDoc" href="#">Ajouter des documents au dossier via phonecapture</a>
+                          <a class="dropdown-item prepareReceptionDoc" href="#">Ajouter des documents au dossier via phonecapture</a>
                       </li>
                     {% endif %}
                 </ul>
             </div>
 
             <div class="btn-group">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" {% if config.administratifPeutAvoirRecettes != 'true' %}disabled="disabled"{% endif %}>
+                <button type="button" class="btn btn-primary dropdown-toggle m-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" {% if config.administratifPeutAvoirRecettes != 'true' %}disabled="disabled"{% endif %}>
                     Règlement
-                    <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
 	          {% for k,v in page.formReglement %}
                     <li>
-                      <a id="linkAddNewReglement"  data-porteur="{{ k }}" data-module="{{ v.module }}" data-reglementForm="{{ v.form }}" href="#">{{ v.module }} : Nouveau règlement</a>
+                      <a class="dropdown-item" id="linkAddNewReglement" data-porteur="{{ k }}" data-module="{{ v.module }}" data-reglementForm="{{ v.form }}" href="#">{{ v.module }} : Nouveau règlement</a>
                     </li>
                   {% endfor %}
                 </ul>
@@ -165,27 +160,26 @@
 
             {% if config.dicomHost!='' %}
               <div class="btn-group">
-                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <button type="button" class="btn btn-primary dropdown-toggle m-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       DICOM
-                      <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu">
                     <li>
-                        <a href="#" class="catchLastDicomSrData">Récupérer dernières mesures</a>
+                        <a href="#" class="dropdown-item catchLastDicomSrData">Récupérer dernières mesures</a>
                     </li>
                     <li>
-                        <a href="#" class="catchOthersDicomSrData">Récupérer mesures antérieures</a>
+                        <a href="#" class="dropdown-item catchOthersDicomSrData">Récupérer mesures antérieures</a>
                     </li>
-                    <li role="separator" class="divider"></li>
+                    <li role="separator" class="dropdown-divider"></li>
                     <li>
-                        <a href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/dicom/{{ page.patient.id }}/" target="_blank">Voir tous les examens du patient</a>
+                        <a class="dropdown-item" href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/dicom/{{ page.patient.id }}/" target="_blank">Voir tous les examens du patient</a>
                     </li>
-                    <li role="separator" class="divider"></li>
+                    <li role="separator" class="dropdown-divider"></li>
                     <li>
-                        <a href="#" class="prepareEcho">Envoyer patient à échographe</a>
+                        <a href="#" class="dropdown-item prepareEcho">Envoyer patient à échographe</a>
                     </li>
                     <li>
-                        <a href="#" class="prepareReceptionDoc dicom">Envoyer patient à phonecapture</a>
+                        <a href="#" class="dropdown-item prepareReceptionDoc dicom">Envoyer patient à phonecapture</a>
                     </li>
                   </ul>
               </div>
@@ -199,71 +193,72 @@
               {# Formulaire dlatéral des ATCD #}
               <ul class="nav nav-tabs" role="tablist">
                 {% if page.atcdFormNames|length > 1 %}
-                  <li class="dropdown active">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-th-list"></span>
-                      <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                {% endif %}
-                      {% set z=0 %}
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" data-toggle="dropdown" href="#"><span class="fa fa-th-list"></span></a>
+                    <div class="dropdown-menu">
                       {% for k,v in page.atcdFormNames %}
-                        <li {% if z==0 %}class="active"{% endif %}>
-                          <a href="#tab{{ v }}" aria-controls="tab{{ v }}" data-toggle="tab"
+                          <a class="dropdown-item{% if loop.first %} active{% endif %}" href="#tab{{ v }}" aria-controls="tab{{ v }}" data-toggle="tab"
                             onclick="setTimeout((function(){$('#formName_{{ v }} textarea').each(function(idx,el){if(el.value!='')auto_grow(el)})}),5)">{{ k }}</a>
-                        </li>
-                        {% set z=1 %}
                       {% endfor %}
-                {% if page.atcdFormNames|length > 1 %}
-                    </ul>
+                    </div>
+                  </li>
+                {% else %}
+                  <li class="nav-item">
+                    {% for k,v in page.atcdFormNames %}
+                      <a class="nav-link active" href="#tab{{ v }}" aria-controls="tab{{ v }}" data-toggle="tab"
+                        onclick="setTimeout((function(){$('#formName_{{ v }} textarea').each(function(idx,el){if(el.value!='')auto_grow(el)})}),5)">{{ k }}</a>
+                    {% endfor %}
                   </li>
                 {% endif %}
                 {% if page.liensFamiliaux %}
-                  <li>
-                    <a href="#tabLiens" aria-controls="tabLiens" data-toggle="tab"><span class="glyphicon glyphicon-link"></span></a>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#tabLiens" aria-controls="tabLiens" data-toggle="tab"><span class="fa fa-link"></span></a>
                   </li>
                 {% endif %}
               </ul>
               <div class="tab-content" style="padding-top:12px">
-                {% set z=0 %}
                 {% for k,v in page.atcdFormNames %}
-                  <div role="tabpanel" class="tab-pane{% if z==0 %} active{% endif %}" id="tab{{ v }}">
+                  <div role="tabpanel" class="tab-pane{% if loop.first %} active{% endif %}" id="tab{{ v }}">
                     <div id="latForm" class=" changeObserv">
                       {{ f.formbuilder(page.atcdFormDatas[k] , v , valFormLat ) }}
                     </div>
                   </div>
-                  {% set z=1 %}
                 {% endfor %}
 
                 {% if page.liensFamiliaux %}
-                  <div id="tabLiens" class="tab-pane" role="tabpanel">
+                  <div id="tabLiens" class="tab-pane col-md-12 p-0" role="tabpanel">
                     {# Liens familiaux #}
-                    <div class="panel panel-default">
-                			<div class="panel-heading gras">Liens familiaux <a class="btn btn-default btn-xs pull-right" role="button" href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/patient/relations/{{ page.patient.id }}/" title="Édition des relations"><span class="glyphicon glyphicon-link" aria-hidden="true"></span></a>
+                    <div class="card">
+                      <div class="card-header py-0 gras">Liens familiaux <a href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/patient/relations/{{ page.patient.id }}/">
+                        <button class="btn btn-default btn-sm float-right m-1" role="button" title="Édition des relations"><span class="fa fa-link" aria-hidden="true"></span></button></a>
                       </div>
 
-                      <table class="table table-striped table-condensed table-hover small">
-                				<thead>
-                					<tr>
-                						<th class="col-md-1"></th>
-                						<th class="col-md-5">patient</th>
-                            <th class="col-md-3">ddn</th>
-                						<th class="col-md-3">relation</th>
-                					</tr>
-                				</thead>
-                				<tbody>
-                          {% for v in page.liensFamiliaux %}
+                      <table class="table table-sm table-striped table-condensed table-hover small m-0">
+                        <thead>
                           <tr>
-                            <td>
-                              <a target="_blank" class="btn btn-default btn-xs" role="button" href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/patient/{{ v.patientID }}/"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span></a>
-                            </td>
-                            <td class="gras">{{ v.nom }} {{v.prenom }}</td>
-                            <td>{{ v.ddn }}</td>
-                            <td>{{ v.typeRelation }}</td>
+                            <th></th>
+                            <th>patient</th>
+                            <th>ddn</th>
+                            <th>relation</th>
                           </tr>
+                        </thead>
+                        <tbody>
+                          {% for v in page.liensFamiliaux %}
+                            <tr>
+                              <td>
+                                <a target="_blank" href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/patient/{{ v.patientID }}/">
+                                  <button class="btn btn-default btn-sm" role="button"><span class="fa fa-folder-open" aria-hidden="true"></span></button>
+                                </a>
+                              </td>
+                              <td class="gras">{{ v.nom }} {{v.prenom }}</td>
+                              <td>{{ v.ddn }}</td>
+                              <td>{{ v.typeRelation }}</td>
+                            </tr>
                           {% endfor %}
-                				</tbody>
-                			</table>
-                		</div>
+                        </tbody>
+
+                      </table>
+                    </div>
                   </div>
                 {% endif %}
               </div>
