@@ -30,6 +30,8 @@
 $atcd=msSQL::sql2tab("SELECT internalName AS name, module FROM forms WHERE cat=(SELECT id from forms_cat where name='formATCD')", 'name');
 $synth=msSQL::sql2tab("SELECT internalName AS name, module FROM forms WHERE cat=(SELECT id from forms_cat where name='formSynthese')", 'name');
 
+$p['page']['modules']=msSQL::sql2tab("SELECT name, value AS version FROM system WHERE groupe='module'");
+
 $form=new msForm();
 $p['page']['atcdFormNames']=array();
 $p['page']['atcdFormDatas']=array();
@@ -50,14 +52,16 @@ foreach ($synth as $v) {
 $p['page']['listeForms']=array_merge(array_values($p['page']['atcdFormNames']), array_values($p['page']['synthFormNames']));
 
 $data = new msData;
-$p['page']['typeCs_csSecretariat']=$data->getDataTypesFromGroupe('typecs', array('id','label', 'module', 'formValues'));
-
-
-$data=new msData;
-$reglements=$data->getDataTypesFromCatName('porteursReglement', array('name', 'module', 'formValues'));
-foreach ($reglements as $v) {
-    $p['page']['formReglement'][$v['name']]=array('module'=>$v['module'], 'form'=>$v['formValues']);
+$cs=$data->getDataTypesFromGroupe('typecs', array('id','label', 'description', 'module', 'formValues'));
+foreach ($cs as $v) {
+    $p['page']['formCs'][$v['module']][]=$v;
 }
-$p['page']['formOrdo']['ordoPorteur']=array('module'=>'base', 'form'=>'');
-
+$reglements=$data->getDataTypesFromCatName('porteursReglement', array('id', 'module', 'label', 'description', 'formValues'));
+foreach ($reglements as $v) {
+    $p['page']['formReglement'][$v['module']][]=$v;
+}
+$ordos=$data->getDataTypesFromCatName('porteursOrdo', array('id', 'module', 'label', 'description', 'formValues'));
+foreach ($ordos as $v) {
+    $p['page']['formOrdo'][$v['module']][]=$v;
+}
 
