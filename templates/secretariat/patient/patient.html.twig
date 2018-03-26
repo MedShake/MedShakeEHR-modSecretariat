@@ -76,6 +76,34 @@
 
         </div>
 
+        {% set first='base' %}
+        {% if page.modules|length > 3 %}
+          <ul class="nav nav-tabs" role="tablist" style="margin-bottom:20px">
+            {% for m in page.modules %}
+              {% if m.name != 'secretariat' and m.name != 'base' %}
+                <li {% if first=='base' %}class="active"{% endif %}>
+                  <a href="#tab_{{ m.name }}" aria-controls="tab_{{ m.name }}" data-toggle="tab"
+                    onclick="$('.hideshow').removeClass('show').addClass('hide'); $('.hideshow.mod{{ m.name }}').removeClass('hide').addClass('show');setTimeout((function(){$('#formName_{{ m.name }} textarea').each(function(idx,el){auto_grow(el)})}),5);">
+                    <h3 style="margin-top:4px;margin-bottom:4px">{{ m.name }}</h3>
+                  </a>
+                </li>
+                {% set first = (first=='base') ? m.name : first %}
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% elseif page.modules|length == 3 %}
+          {% for m in page.modules %}
+            {% if m.name != 'base' and m.name != 'secretariat' %}
+              {% set first = m.name %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+
+        <div class="tab-content hide" role="document">
+          {% for m in page.modules %}
+            <div id="tab_{{ m.name }}" class="tab-pane{% if m.name==first %} active{% endif %}"></div>
+          {% endfor %}
+        </div>
         <div class="row">
 
           {% if config.secretariatPeutCreerConsult %}
@@ -84,10 +112,14 @@
                     Consultation
                 </button>
                 <ul class="dropdown-menu">
-                  {% for v in page.typeCs_csSecretariat %}
-                    <li>
-                      <a id="linkAddNewCs{{ v.id }}" class="dropdown-item newCS" data-parentID='0' data-formtocall="{{ v.formValues }}" data-csID="{{ v.id }}" data-mode="create" href="#">{{ v.module }} : {{ v.label|e }}</a>
-                    </li>
+                  {% for m in page.modules %}
+                    {% if m.name != 'base' or page.modules|length == 2 %}
+                      {% for v in page.formCs[m.name] %}
+                        <li class="hideshow mod{{ m.name }} {% if m.name==first %}show{% else %}hide{% endif %}">
+                          <a class="dropdown-item newCS addNewCS" data-parentID='0' data-formtocall="{{ v.formValues }}" data-csID="{{ v.id }}" data-mode="create" href="#">{{ v.label|e }}</a>
+                        </li>
+                      {% endfor %}
+                    {% endif %}
                   {% endfor %}
                 </ul>
             </div>
@@ -99,11 +131,21 @@
                     Ordonnance
                 </button>
                 <ul class="dropdown-menu">
-                  <li>
-                    {% for k,v in page.formOrdo %}
-                      <a class="dropdown-item" id="linkAddNewOrdo" data-porteur="{{ k }}" data-module="{{ v.module }}" data-ordoForm="{{ v.form }}" href="#">{{ v.module }} : Nouvelle prescription</a>
-                    {% endfor %}
-                  </li>
+                  {% for m in page.modules %}
+                    {% if m.name != 'base' or page.modules|length == 2 %}
+                      {% if page.formOrdo[m.name]|length %}
+                        {% for v in page.formOrdo[m.name] %}
+                          <li class="hideshow mod{{ m.name }} {% if m.name==first %}show{% else %}hide{% endif %}">
+                            <a class="dropdown-item addNewOrdo" title="{{ v.description }}" data-porteur="{{ v.id }}" data-module="{{ m.name }}" data-ordoForm="{{ v.formValues }}" href="#">{{ v.label }}</a>
+                          </li>
+                        {% endfor %}
+                      {% else %}
+                        <li class="hideshow mod{{ m.name }} {% if m.name==first %}show{% else %}hide{% endif %}">
+                          <span><i>Pas d'ordonnance pour cette discipline</i></span>
+                        </li>
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
                 </ul>
             </div>
           {% endif %}
@@ -150,10 +192,14 @@
                     Règlement
                 </button>
                 <ul class="dropdown-menu">
-	          {% for k,v in page.formReglement %}
-                    <li>
-                      <a class="dropdown-item" id="linkAddNewReglement" data-porteur="{{ k }}" data-module="{{ v.module }}" data-reglementForm="{{ v.form }}" href="#">{{ v.module }} : Nouveau règlement</a>
-                    </li>
+                  {% for m in page.modules %}
+                    {% if m.name != 'base' or page.modules|length == 2 %}
+                      {% for v in page.formReglement[m.name] %}
+                        <li class="hideshow mod{{ m.name }} {% if m.name==first %}show{% else %}hide{% endif %}">
+                          <a class="dropdown-item addNewReglement" title="{{ v.description }}" data-porteur="{{ v.id }}" data-module="{{ m.name }}" data-reglementForm="{{ v.formValues }}" href="#">{{ v.label }}</a>
+                        </li>
+                      {% endfor %}
+                    {% endif %}
                   {% endfor %}
                 </ul>
             </div>
@@ -188,28 +234,14 @@
         </div>
 
         <div class="row" style="margin-top : 40px">
+
           {% if config.secretariatPeutVoirAtcd %}
             <div  class="col-md-3" style="border:1px solid #ccc;border-radius:4px;padding-top:10px">
-              {# Formulaire dlatéral des ATCD #}
+              {# Formulaire latéral des ATCD #}
               <ul class="nav nav-tabs" role="tablist">
-                {% if page.atcdFormNames|length > 1 %}
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle active" data-toggle="dropdown" href="#"><span class="fa fa-th-list"></span></a>
-                    <div class="dropdown-menu">
-                      {% for k,v in page.atcdFormNames %}
-                          <a class="dropdown-item{% if loop.first %} active{% endif %}" href="#tab{{ v }}" aria-controls="tab{{ v }}" data-toggle="tab"
-                            onclick="setTimeout((function(){$('#formName_{{ v }} textarea').each(function(idx,el){if(el.value!='')auto_grow(el)})}),5)">{{ k }}</a>
-                      {% endfor %}
-                    </div>
-                  </li>
-                {% else %}
-                  <li class="nav-item">
-                    {% for k,v in page.atcdFormNames %}
-                      <a class="nav-link active" href="#tab{{ v }}" aria-controls="tab{{ v }}" data-toggle="tab"
-                        onclick="setTimeout((function(){$('#formName_{{ v }} textarea').each(function(idx,el){if(el.value!='')auto_grow(el)})}),5)">{{ k }}</a>
-                    {% endfor %}
-                  </li>
-                {% endif %}
+                <li class="active">
+                  <a href="#tabAtcd" aria-controls="tabAtcd" data-toggle="tab"><span class="glyphicon glyphicon-list-alt"></a>
+                </li>
                 {% if page.liensFamiliaux %}
                   <li class="nav-item">
                     <a class="nav-link" href="#tabLiens" aria-controls="tabLiens" data-toggle="tab"><span class="fa fa-link"></span></a>
@@ -217,13 +249,23 @@
                 {% endif %}
               </ul>
               <div class="tab-content" style="padding-top:12px">
-                {% for k,v in page.atcdFormNames %}
-                  <div role="tabpanel" class="tab-pane{% if loop.first %} active{% endif %}" id="tab{{ v }}">
-                    <div id="latForm" class=" changeObserv">
-                      {{ f.formbuilder(page.atcdFormDatas[k] , v , valFormLat ) }}
-                    </div>
-                  </div>
-                {% endfor %}
+                <div id="tabAtcd" class="tab-pane active" role="tabpanel">
+                  {% for module in page.modules %}
+                    {% set k = module.name %}
+                    {% if k != 'secretariat' and (page.modules|length < 4 or k != 'base') %}
+                      {% set k=module.name %}
+                      <div class="hideshow mod{{ k }} {% if k==first %}show{% else %}hide{% endif %} changeObserv">
+                        <div id="latForm" class="hideshow mod{{ k }} {% if k==first %}show{% else %}hide{% endif %} changeObserv">
+                          {% if page.atcdFormNames[k] %}
+                            {{ f.formbuilder(page.atcdFormDatas[k] , page.atcdFormNames[k] , valFormLat ) }}
+                          {% else %}
+                            {{ f.formbuilder(page.atcdFormDatas['base'] , page.atcdFormNames['base'] , valFormLat ) }}
+                          {% endif %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
 
                 {% if page.liensFamiliaux %}
                   <div id="tabLiens" class="tab-pane col-md-12 p-0" role="tabpanel">

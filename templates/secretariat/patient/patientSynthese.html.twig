@@ -31,33 +31,18 @@
 
     <div class="jumbotron col-md-12 col-md-12">
 
-                {% if page.synthFormNames|length > 1 %}
-                  <ul class="nav nav-tabs" role="tablist">
-                    {% for k,v in page.synthFormNames %}
-                      <li role="presentation" class="nav-item">
-                        <a class="nav-link{% if loop.first %} active{% endif %}" href="#tab{{ v }}" aria-controls="tab{{ v }}" role="tab" data-toggle="tab" style="background-color:transparent !important"
-                        onclick="setTimeout((function(){$('#formName_{{ v }} textarea').each(function(idx,el){if(el.value!='')auto_grow(el)})}),5)">{{ k }}</a>
-                      </li>
-                    {% endfor %}
-                  </ul>
-                {% endif %}
-                {% if page.synthFormNames|length > 1 %}
-                  <div class="tab-content" style="padding-top:12px">
-                    {% for k,v in page.synthFormNames %}
-                      <div role="tabpanel" class="tab-pane{% if loop.first %} active{% endif %}" id="tab{{ v }}">
-                        <div id="latForm" class=" changeObserv">
-                          {{ f.formbuilder(page.synthFormDatas[k] , v ) }}
-                        </div>
-                      </div>
-                    {% endfor %}
-                  </div>
-                {% else %}
-                  {% for k,v in page.synthFormNames %}
-                    <div id="latForm" class=" changeObserv">
-                      {{ f.formbuilder(page.synthFormDatas[k] , v) }}
-                    </div>
-                  {% endfor %}
-                {% endif %}
+      {% for module in page.modules %}
+        {% set k=module.name %}
+        {% if k != 'secretariat' and (page.modules|length < 4 or k != 'base') %}
+          <div id="latForm" class="hideshow mod{{ k }} {% if k==first %}show{% else %}hide{% endif %} changeObserv">
+            {% if page.synthFormNames[k] %}
+              {{ f.formbuilder(page.synthFormDatas[k] , page.synthFormNames[k]) }}
+            {% else %}
+              {{ f.formbuilder(page.synthFormDatas['base'] , page.synthFormNames['base']) }}
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
     </div>
 
 </div>

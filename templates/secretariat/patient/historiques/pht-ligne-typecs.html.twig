@@ -35,9 +35,10 @@
   </td>
   <td>
     {# view / edit #}
-    <button type="button" class="btn btn-default btn-sm newCS" data-parentID="{{ cs.parentID }}" data-objetID="{{ cs.id }}" data-formtocall="{{ cs.formName }}" data-csID="{{ cs.typeCS }}" data-prevalues="yes" data-mode="{{ cs.iconeType }}">
+    {% set iconeType = (config.secretariatPeutEditerConsult ? cs.iconeType : 'view') %}
+    <button type="button" class="btn btn-default btn-sm newCS" data-parentID="{{ cs.parentID }}" data-objetID="{{ cs.id }}" data-formtocall="{{ cs.formName }}" data-csID="{{ cs.typeCS }}" data-prevalues="yes" data-mode="{{ iconeType }}">
 
-      {% if cs.iconeType == 'update' and config.secretariatPeutEditerConsult %}
+      {% if iconeType == 'update' %}
         <span class="fa fa-pencil-alt" aria-hidden="true" title="Editer"></span>
       {% else %}
         <span class="fa fa-eye" aria-hidden="true" title="Voir"></span>
