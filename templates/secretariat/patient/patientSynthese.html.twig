@@ -34,7 +34,7 @@
       {% for module in page.modules %}
         {% set k=module.name %}
         {% if k != 'secretariat' and (page.modules|length < 4 or k != 'base') %}
-          <div id="latForm" class="hideshow mod{{ k }} {% if k==first %}show{% else %}hide{% endif %} changeObserv">
+          <div id="latForm" class="hideshow mod{{ k }} {% if k!=first %}d-none{% endif %} changeObserv">
             {% if page.synthFormNames[k] %}
               {{ f.formbuilder(page.synthFormDatas[k] , page.synthFormNames[k]) }}
             {% else %}

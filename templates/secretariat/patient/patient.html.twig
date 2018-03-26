@@ -28,9 +28,8 @@
 
 {% extends "page.html.twig" %}
 {% import "macroForm.html.twig" as f %}
-{% block title %}{{ page['patient']['administrativeDatas']['3']['value']|e }}
-    {% if page['patient']['administrativeDatas']['2']['value'] %}{{ page['patient']['administrativeDatas']['2']['value']|e }}
-    {% else %}{{ page['patient']['administrativeDatas']['1']['value']|e }}{% endif %}
+{% block title %}{{ page.patient.administrativeDatas.firstname.value|e }}
+    {{ (page.patient.administrativeDatas.lastname.value|default(page.patient.administrativeDatas.birthname.value))|e }}
     : dossier patient - MedShakeEHR
 {% endblock %}
 
@@ -43,6 +42,7 @@
     {{ parent() }}
     <script defer src="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/thirdparty/tinymce/tinymce/tinymce.min.js"></script>
     <script defer src="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/thirdparty/tinymce/tinymce/jquery.tinymce.min.js"></script>
+    <script defer src="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/thirdparty/mattbryson/TouchSwipe-Jquery-Plugin/jquery.touchSwipe.min.js"></script>
 
     {# JS général du dossier patient #}
     <script defer src="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/js/patient.js"></script>
@@ -56,6 +56,10 @@
     {% endfor %}
 
     <style>
+        @media (max-width:992px) {
+          .atcd {padding-left:15px !important; padding-right: 15px !important;margin-bottom:10px}
+          .dossier {padding-left:15px !important; padding-right: 15px !important} 
+        }
         #newDoc{
           display: none;
         }
@@ -81,9 +85,9 @@
           <ul class="nav nav-tabs" role="tablist" style="margin-bottom:20px">
             {% for m in page.modules %}
               {% if m.name != 'secretariat' and m.name != 'base' %}
-                <li {% if first=='base' %}class="active"{% endif %}>
-                  <a href="#tab_{{ m.name }}" aria-controls="tab_{{ m.name }}" data-toggle="tab"
-                    onclick="$('.hideshow').removeClass('show').addClass('hide'); $('.hideshow.mod{{ m.name }}').removeClass('hide').addClass('show');setTimeout((function(){$('#formName_{{ m.name }} textarea').each(function(idx,el){auto_grow(el)})}),5);">
+                <li class="nav-item">
+                  <a class="nav-link{% if first=='base' %} active{% endif %}" href="#tab_{{ m.name }}" aria-controls="tab_{{ m.name }}" data-toggle="tab"
+                    onclick="$('.hideshow').removeClass('d-none').addClass('d-none'); $('.hideshow.mod{{ m.name }}').removeClass('d-none');setTimeout((function(){$('#formName_{{ m.name }} textarea').each(function(idx,el){auto_grow(el)})}),5);">
                     <h3 style="margin-top:4px;margin-bottom:4px">{{ m.name }}</h3>
                   </a>
                 </li>
@@ -109,13 +113,13 @@
           {% if config.secretariatPeutCreerConsult %}
             <div class="btn-group">
                 <button type="button" class="btn btn-primary dropdown-toggle m-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Consultation
+                    Consultations
                 </button>
                 <ul class="dropdown-menu">
                   {% for m in page.modules %}
                     {% if m.name != 'base' or page.modules|length == 2 %}
                       {% for v in page.formCs[m.name] %}
-                        <li class="hideshow mod{{ m.name }} {% if m.name==first %}show{% else %}hide{% endif %}">
+                        <li class="hideshow mod{{ m.name }} {% if m.name!=first %}d-none{% endif %}">
                           <a class="dropdown-item newCS addNewCS" data-parentID='0' data-formtocall="{{ v.formValues }}" data-csID="{{ v.id }}" data-mode="create" href="#">{{ v.label|e }}</a>
                         </li>
                       {% endfor %}
@@ -128,19 +132,19 @@
           {% if config.secretariatPeutCreerOrdo %}
             <div class="btn-group">
                 <button type="button" class="btn btn-primary dropdown-toggle m-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Ordonnance
+                    Ordonnances
                 </button>
                 <ul class="dropdown-menu">
                   {% for m in page.modules %}
                     {% if m.name != 'base' or page.modules|length == 2 %}
                       {% if page.formOrdo[m.name]|length %}
                         {% for v in page.formOrdo[m.name] %}
-                          <li class="hideshow mod{{ m.name }} {% if m.name==first %}show{% else %}hide{% endif %}">
+                          <li class="hideshow mod{{ m.name }} {% if m.name!=first %}d-none{% endif %}">
                             <a class="dropdown-item addNewOrdo" title="{{ v.description }}" data-porteur="{{ v.id }}" data-module="{{ m.name }}" data-ordoForm="{{ v.formValues }}" href="#">{{ v.label }}</a>
                           </li>
                         {% endfor %}
                       {% else %}
-                        <li class="hideshow mod{{ m.name }} {% if m.name==first %}show{% else %}hide{% endif %}">
+                        <li class="hideshow mod{{ m.name }} {% if m.name!=first %}d-none{% endif %}">
                           <span><i>Pas d'ordonnance pour cette discipline</i></span>
                         </li>
                       {% endif %}
@@ -189,13 +193,13 @@
 
             <div class="btn-group">
                 <button type="button" class="btn btn-primary dropdown-toggle m-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" {% if config.administratifPeutAvoirRecettes != 'true' %}disabled="disabled"{% endif %}>
-                    Règlement
+                    Règlements
                 </button>
                 <ul class="dropdown-menu">
                   {% for m in page.modules %}
                     {% if m.name != 'base' or page.modules|length == 2 %}
                       {% for v in page.formReglement[m.name] %}
-                        <li class="hideshow mod{{ m.name }} {% if m.name==first %}show{% else %}hide{% endif %}">
+                        <li class="hideshow mod{{ m.name }} {% if m.name!=first %}d-none{% endif %}">
                           <a class="dropdown-item addNewReglement" title="{{ v.description }}" data-porteur="{{ v.id }}" data-module="{{ m.name }}" data-reglementForm="{{ v.formValues }}" href="#">{{ v.label }}</a>
                         </li>
                       {% endfor %}
@@ -233,14 +237,19 @@
 
         </div>
 
-        <div class="row" style="margin-top : 40px">
+
+        {% if config.secretariatPeutVoirAtcd %}
+          <div class="row swipable" style="margin-top : 40px">
+        {% else %}
+          <div class="row" style="margin-top : 40px">
+        {% endif %}
 
           {% if config.secretariatPeutVoirAtcd %}
-            <div  class="col-md-3" style="border:1px solid #ccc;border-radius:4px;padding-top:10px">
+            <div  class="col-lg-3 atcd" style="border:1px solid #ccc;border-radius:4px;padding-top:10px">
               {# Formulaire latéral des ATCD #}
               <ul class="nav nav-tabs" role="tablist">
-                <li class="active">
-                  <a href="#tabAtcd" aria-controls="tabAtcd" data-toggle="tab"><span class="glyphicon glyphicon-list-alt"></a>
+                <li class="nav-item">
+                  <a class="nav-link active" href="#tabAtcd" aria-controls="tabAtcd" data-toggle="tab"><span class="fa fa-list"></a>
                 </li>
                 {% if page.liensFamiliaux %}
                   <li class="nav-item">
@@ -271,8 +280,10 @@
                   <div id="tabLiens" class="tab-pane col-md-12 p-0" role="tabpanel">
                     {# Liens familiaux #}
                     <div class="card">
-                      <div class="card-header py-0 gras">Liens familiaux <a href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/patient/relations/{{ page.patient.id }}/">
-                        <button class="btn btn-default btn-sm float-right m-1" role="button" title="Édition des relations"><span class="fa fa-link" aria-hidden="true"></span></button></a>
+                      <div class="card-header py-0 gras">Liens familiaux
+                        <a class="btn btn-default btn-sm float-right m-1" role="button" href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/patient/relations/{{ page.patient.id }}/" title="Édition des relations">
+                          <span class="fa fa-link" aria-hidden="true"></span>
+                        </a>
                       </div>
 
                       <table class="table table-sm table-striped table-condensed table-hover small m-0">
@@ -288,8 +299,8 @@
                           {% for v in page.liensFamiliaux %}
                             <tr>
                               <td>
-                                <a target="_blank" href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/patient/{{ v.patientID }}/">
-                                  <button class="btn btn-default btn-sm" role="button"><span class="fa fa-folder-open" aria-hidden="true"></span></button>
+                                <a class="btn btn-default btn-sm" role="button" href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/patient/{{ v.patientID }}/" target="_blank">
+                                  <span class="fa fa-folder-open" aria-hidden="true"></span>
                                 </a>
                               </td>
                               <td class="gras">{{ v.nom }} {{v.prenom }}</td>
@@ -307,46 +318,45 @@
             </div>
           {% endif %}
 
-            {# colonne principale #}
+          {# colonne principale #}
           {% if config.secretariatPeutVoirAtcd %}
-            <div class="col-md-9" style="padding-left : 35px">
+            <div class="col-lg-9 dossier" style="padding-left : 35px">
           {% else %}
-            <div class="col-md-12" style="padding-left : 35px">
+            <div class="col-12" style="padding-left : 35px">
           {% endif %}
-              {# Div d'import de nouveau doc #}
-              <div id="newDoc" class="row toclear">{% include 'importDocForm.html.twig' %}</div>
+          {# Div d'import de nouveau doc #}
+          <div id="newDoc" class="row toclear">{% include 'importDocForm.html.twig' %}</div>
+            {# historique du jour #}
+            <div id="historiqueToday" class="row">
+              {% include 'patientHistoriqueToday.html.twig' %}
+            </div>
 
-              {# historique du jour #}
-              <div id="historiqueToday">
-                {% include 'patientHistoriqueToday.html.twig' %}
-              </div>
+            {# Div d'insertion de nouveau reglement #}
+            <div id="newReglement" class="row toclear"></div>
 
-              {# Div d'insertion de nouveau reglement #}
-              <div id="newReglement" class="row toclear"></div>
+            {# Div d'insertion de nouveau courrier #}
+            <div id="newCourrier" class="row toclear"></div>
 
-              {# Div d'insertion de nouveau courrier #}
-              <div id="newCourrier" class="row toclear"></div>
+            {# Div d'insertion de nouvelle ordonance #}
+            <div id="newOrdo" class="row toclear"></div>
 
-              {# Div d'insertion de nouvelle ordonance #}
-              <div id="newOrdo" class="row toclear"></div>
+            {# Div d'insertion de nouvelle consultation #}
+            <div id="nouvelleCs" class="row toclear checkboxFixValue"></div>
 
-              {# Div d'insertion de nouvelle consultation #}
-              <div id="nouvelleCs" class="row toclear checkboxFixValue"></div>
+            {# Div d'insertion de nouveau mail  #}
+            <div id="newMail" class="row toclear"></div>
 
-              {# Div d'insertion de nouveau mail  #}
-              <div id="newMail" class="row toclear"></div>
+            {# Synthèse patient #}
+            {% if config.secretariatPeutVoirSynthese %}
+              {% include 'patientSynthese.html.twig' %}
+            {% endif %}
 
-              {# Synthèse patient #}
-              {% if config.secretariatPeutVoirSynthese %}
-                {% include 'patientSynthese.html.twig' %}
-              {% endif %}
-
-              {# Historique complet #}
-              <div id="historique">
-                {% include 'patientHistoriqueMedical.html.twig' %}
-              </div>
+            {# Historique complet #}
+            <div id="historique" class="row">
+              {% include 'patientHistoriqueMedical.html.twig' %}
             </div>
           </div>
+        </div>
 
     </div>
 
