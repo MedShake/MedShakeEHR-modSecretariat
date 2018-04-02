@@ -28,6 +28,6 @@
 
 $m=$match['params']['m'];
 
-if (isset($_POST['module']) and is_file($p['config']['homeDirectory'].'/controlers/module/'.$_POST['module'].'/patient/actions/patientActions.php')) {
-    include $p['config']['homeDirectory'].'/controlers/module/'.$_POST['module'].'/patient/actions/patientActions.php';
+if (isset($_POST['module']) and is_file($p['homepath'].'/controlers/module/'.$_POST['module'].'/patient/actions/patientActions.php')) {
+    include $p['homepath'].'/controlers/module/'.$_POST['module'].'/patient/actions/patientActions.php';
 }

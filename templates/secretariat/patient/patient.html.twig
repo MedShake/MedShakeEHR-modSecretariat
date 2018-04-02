@@ -56,10 +56,6 @@
     {% endfor %}
 
     <style>
-        @media (max-width:992px) {
-          .atcd {padding-left:15px !important; padding-right: 15px !important;margin-bottom:10px}
-          .dossier {padding-left:15px !important; padding-right: 15px !important} 
-        }
         #newDoc{
           display: none;
         }
@@ -245,7 +241,7 @@
         {% endif %}
 
           {% if config.secretariatPeutVoirAtcd %}
-            <div  class="col-lg-3 atcd" style="border:1px solid #ccc;border-radius:4px;padding-top:10px">
+            <div  class="col-md-4 col-xl-3 px-3 pt-3 atcd" style="border:1px solid #ccc;border-radius:4px">
               {# Formulaire latéral des ATCD #}
               <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item">
@@ -263,15 +259,13 @@
                     {% set k = module.name %}
                     {% if k != 'secretariat' and (page.modules|length < 4 or k != 'base') %}
                       {% set k=module.name %}
-                      <div class="hideshow mod{{ k }} {% if k==first %}show{% else %}hide{% endif %} changeObserv">
-                        <div id="latForm" class="hideshow mod{{ k }} {% if k==first %}show{% else %}hide{% endif %} changeObserv">
+                        <div id="latForm" class="hideshow mod{{ k }}{% if k!=first %} d-none{% endif %} changeObserv">
                           {% if page.atcdFormNames[k] %}
                             {{ f.formbuilder(page.atcdFormDatas[k] , page.atcdFormNames[k] , valFormLat ) }}
                           {% else %}
                             {{ f.formbuilder(page.atcdFormDatas['base'] , page.atcdFormNames['base'] , valFormLat ) }}
                           {% endif %}
                         </div>
-                      </div>
                     {% endif %}
                   {% endfor %}
                 </div>
@@ -320,9 +314,9 @@
 
           {# colonne principale #}
           {% if config.secretariatPeutVoirAtcd %}
-            <div class="col-lg-9 dossier" style="padding-left : 35px">
+            <div class="col-md-8 col-xl-9 pl-md-4 dossier">
           {% else %}
-            <div class="col-12" style="padding-left : 35px">
+            <div class="col-12">
           {% endif %}
           {# Div d'import de nouveau doc #}
           <div id="newDoc" class="row toclear">{% include 'importDocForm.html.twig' %}</div>

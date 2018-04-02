@@ -26,13 +26,13 @@
  # @contrib fr33z00 <https://github.com/fr33z00>
  #}
 
- <tr id="lh{{ cs.id }}" class="tr{{ cs.id }} trLigneExamen" data-objetID="{{ cs.id }}" data-alternatTitre="{{ cs.titre|e('html_attr') }}" data-registerDate="{{ cs.registerDate }}" data-creationDate="{{ cs.creationDate }}" data-groupe="{{ cs.groupe|e('html_attr') }}">
+ <tr id="lh{{ cs.id }}" class="tr{{ cs.id }} trLigneExamen collapse{% if cs.creationDate|date("Y") == "now"|date("Y") %} show{% endif %}" data-annee="{{ cs.creationDate|date("Y") }}" data-objetID="{{ cs.id }}" data-alternatTitre="{{ cs.titre|e('html_attr') }}" data-registerDate="{{ cs.registerDate }}" data-creationDate="{{ cs.creationDate }}" data-groupe="{{ cs.groupe|e('html_attr') }}">
   <td>
      <span class="d-none d-md-inline">{{ cs.creationTime }}</span>
      <span class="d-inline d-md-none">{{ cs.creationTimeShort }}</span>
-    {% if cs.creationDate != cs.registerDate %}&nbsp;<button type="button" class="btn btn-default btn-sm changeCreationDate" title="Création réelle le {{ cs.registerDate|date("d/m/Y H:i:s") }}">
-     <span class="far fa-clock" aria-hidden="true"></span>
-    </button>{% endif %}
+     {% if cs.creationDate != cs.registerDate %}&nbsp;<button type="button" class="btn btn-default btn-sm changeCreationDate" title="Création réelle le {{ cs.registerDate|date("d/m/Y H:i:s") }}">
+       <span class="far fa-clock" aria-hidden="true"></span>
+     </button>{% endif %}
   </td>
   <td>
     <div class="btn-group">
@@ -104,7 +104,7 @@
       {# option #}
       <div class="btn-group">
         <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span class="fa fa-bars" aria-hidden="true"></span>
+          <span class="fa fa-ellipsis-h" aria-hidden="true"></span>
         </button>
         <ul class="dropdown-menu">
           <li class="d-block d-lg-none">
@@ -175,6 +175,7 @@
               <a class="dropdown-item" href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/logs/historiqueMailSend/{{ cs.id }}/">Historique des envois par mail</a>
             </li>
           {% endif %}
+          <li class="dropdown-divider d-inline-block d-lg-none"></li>
           <li>
             <a class="dropdown-item" href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/logs/historiquePrint/{{ cs.id }}/">Historique versions PDF générées</a>
           </li>
