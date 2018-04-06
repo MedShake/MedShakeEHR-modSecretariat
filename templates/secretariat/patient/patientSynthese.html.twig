@@ -27,22 +27,22 @@
  #}
 
 {% import "macroForm.html.twig" as f %}
-<div class="row changeObserv" id="synthesePatient" style="">
+{% if config.secretariatPeutVoirSyntheseDe != '' %}
 
-    <div class="jumbotron col-md-12">
+  {% for k in page.listModules %}
+    <div class="row hideshow mod{{ k }} {{ disp }}" id="synthesePatient">
 
-      {% for module in page.modules %}
-        {% set k=module.name %}
-        {% if k != 'secretariat' and (page.modules|length < 4 or k != 'base') %}
-          <div id="latForm" class="hideshow mod{{ k }} {% if k!=first %}d-none{% endif %} changeObserv">
-            {% if page.synthFormNames[k] %}
+      <div class="jumbotron col-md-12">
+
+          <div>
+            {% if k in page.synthFormNames|keys %}
               {{ f.formbuilder(page.synthFormDatas[k] , page.synthFormNames[k]) }}
             {% else %}
               {{ f.formbuilder(page.synthFormDatas['base'] , page.synthFormNames['base']) }}
             {% endif %}
           </div>
-        {% endif %}
-      {% endfor %}
-    </div>
+      </div>
 
-</div>
+    </div>
+  {% endfor %}
+{% endif %}

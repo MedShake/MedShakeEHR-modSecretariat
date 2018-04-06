@@ -30,7 +30,19 @@
 $atcd=msSQL::sql2tab("SELECT internalName AS name, module FROM forms WHERE cat=(SELECT id from forms_cat where name='formATCD')", 'name');
 $synth=msSQL::sql2tab("SELECT internalName AS name, module FROM forms WHERE cat=(SELECT id from forms_cat where name='formSynthese')", 'name');
 
-$p['page']['modules']=msSQL::sql2tab("SELECT name, value AS version FROM system WHERE groupe='module'");
+$data = new msData();
+$name2typeID = $data->getTypeIDsFromName(['firstname', 'lastname', 'titre']);
+$p['page']['listPrats']=msSQL::sql2tabKey("SELECT p.id, p.module, odt.value as titre, odn.value as nom, odp.value as prenom 
+     FROM people as p
+     LEFT JOIN objets_data as odt ON odt.toID=p.id AND odt.typeID='".$name2typeID['titre']."' AND odt.outdated='' AND odt.deleted=''
+     LEFT JOIN objets_data as odn ON odn.toID=p.id AND odn.typeID='".$name2typeID['lastname']."' AND odn.outdated='' AND odn.deleted='' 
+     LEFT JOIN objets_data as odp ON odp.toID=p.id AND odp.typeID='".$name2typeID['firstname']."' AND odp.outdated='' AND odp.deleted=''
+     WHERE p.type='pro' AND p.name!='' AND p.module!='secretariat'", 'id');
+
+foreach($p['page']['listPrats'] as $v) {
+    $p['page']['listModules'][]=$v['module'];
+}
+array_unique($p['page']['listModules']);
 
 $form=new msForm();
 $p['page']['atcdFormNames']=array();
@@ -51,7 +63,6 @@ foreach ($synth as $v) {
 // liste des formulaires fixes au 1er affichage dossier patient pour JS
 $p['page']['listeForms']=array_merge(array_values($p['page']['atcdFormNames']), array_values($p['page']['synthFormNames']));
 
-$data = new msData;
 $cs=$data->getDataTypesFromGroupe('typecs', array('id','label', 'description', 'module', 'formValues'));
 foreach ($cs as $v) {
     $p['page']['formCs'][$v['module']][]=$v;
