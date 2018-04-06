@@ -1,0 +1,117 @@
+{#
+ # This file is part of MedShakeEHR.
+ #
+ # Copyright (c) 2017
+ # Bertrand Boutillier <b.boutillier@gmail.com>
+ # http://www.medshake.net
+ #
+ # MedShakeEHR is free software: you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+ # the Free Software Foundation, either version 3 of the License, or
+ # any later version.
+ #
+ # MedShakeEHR is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License
+ # along with MedShakeEHR.  If not, see <http://www.gnu.org/licenses/>.
+ #/
+
+/##
+ # Template > patient : boutons d'actions du dossier patient
+ #
+ # @author Bertrand Boutillier <b.boutillier@gmail.com>
+ # @contrib fr33z00 <https://github.com/fr33z00>
+ #}
+
+<div id="buttons" class="row d-none">
+
+  <div class="btn-group">
+      <button type="button" class="btn btn-primary dropdown-toggle m-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Courriers &amp; Certificats
+      </button>
+      <ul class="dropdown-menu">
+          <li class="dropdown-header">Certificats</li>
+          {% for v in page.modelesCertif %}
+              <li>
+                  <a class="dropdown-item" class="newCourrier" data-modeleID="{{ v.id }}" href="#">{{ v.label }}</a>
+              </li>
+          {% endfor %}
+          <li role="separator" class="dropdown-divider"></li>
+          <li class="dropdown-header">Courriers</li>
+          {% for v in page.modelesCourrier %}
+              <li>
+                  <a class="dropdown-item newCourrier" data-modeleID="{{ v.id }}" href="#">{{ v.label }}</a>
+              </li>
+          {% endfor %}
+      </ul>
+  </div>
+
+  <div class="btn-group">
+      <button type="button" class="btn btn-primary dropdown-toggle m-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Document
+      </button>
+      <ul class="dropdown-menu">
+          <li>
+              <a class="dropdown-item" id="linkAddNewDoc" href="#">Ajouter un document au dossier</a>
+          </li>
+          {% if config.dicomHost=='' %}
+            <li>
+                <a class="dropdown-item prepareReceptionDoc" href="#">Ajouter des documents au dossier via phonecapture</a>
+            </li>
+          {% endif %}
+      </ul>
+  </div>
+
+  {% if config.secretariatPeutCreerReglementDe != '' %}
+    <div class="btn-group">
+      <button type="button" class="btn btn-primary dropdown-toggle m-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Règlements
+      </button>
+      <ul class="dropdown-menu">
+        {% for id,data in page.listPrats %}
+          {% if config.secretariatPeutCreerReglementDe == '0' or id in (config.secretariatPeutCreerReglementDe|split(',')) %}
+            {% for v in page.formReglement[data.module] %}
+              {% if (data.secteur == '1' and 'S1' in v.formValues) or (data.secteur == '2' and 'S2' in v.formValues) or (data.secteur == '' and 'Libre' in v.formValues) %}
+                <li class="hideshow mod{{ data.module }} prat{{ id }}{{ disp }}">
+                  <a class="dropdown-item addNewReglement" title="{{ v.description }}" data-porteur="{{ v.id }}" data-module="{{ data.module }}" data-reglementForm="{{ v.formValues }}" data-asUserID="{{ id }}" href="#">{{ v.label }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if config.dicomHost!='' %}
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary dropdown-toggle m-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            DICOM
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+              <a href="#" class="dropdown-item catchLastDicomSrData">Récupérer dernières mesures</a>
+          </li>
+          <li>
+              <a href="#" class="dropdown-item catchOthersDicomSrData">Récupérer mesures antérieures</a>
+          </li>
+          <li role="separator" class="dropdown-divider"></li>
+          <li>
+              <a class="dropdown-item" href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/dicom/{{ page.patient.id }}/" target="_blank">Voir tous les examens du patient</a>
+          </li>
+          <li role="separator" class="dropdown-divider"></li>
+          <li>
+              <a href="#" class="dropdown-item prepareEcho">Envoyer patient à échographe</a>
+          </li>
+          <li>
+              <a href="#" class="dropdown-item prepareReceptionDoc dicom">Envoyer patient à phonecapture</a>
+          </li>
+        </ul>
+    </div>
+  {% endif %}
+
+</div>
+

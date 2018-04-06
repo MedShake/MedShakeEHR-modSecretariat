@@ -1,0 +1,87 @@
+{#
+ # This file is part of MedShakeEHR.
+ #
+ # Copyright (c) 2017
+ # Bertrand Boutillier <b.boutillier@gmail.com>
+ # http://www.medshake.net
+ #
+ # MedShakeEHR is free software: you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+ # the Free Software Foundation, either version 3 of the License, or
+ # any later version.
+ #
+ # MedShakeEHR is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License
+ # along with MedShakeEHR.  If not, see <http://www.gnu.org/licenses/>.
+ #/
+
+/##
+ # Template > patient : Panneau latéral d'antécédents du dossier patient
+ #
+ # @author Bertrand Boutillier <b.boutillier@gmail.com>
+ # @contrib fr33z00 <https://github.com/fr33z00>
+ #}
+
+{% import "macroForm.html.twig" as f %}
+
+<div class="nav nav-tabs" role="tablist">
+  {% for m in page.listModules %}
+    <a id="navAtcd{{ m }}" class="nav-item nav-link hideshow mod{{ m }}{{ disp }}" href="#tabAtcd{{ m }}" aria-controls="tabAtcd{{ m }}" aria-selected="false" data-toggle="tab"><span class="fa fa-list"></a>
+  {% endfor %}
+  <a class="nav-item nav-link active" href="#tabLiens" aria-controls="tabLiens" aria-selected="true" data-toggle="tab"><span class="fa fa-link"></span></a>
+</div>
+<div class="tab-content" style="padding-top:12px">
+  {% for m in page.listModules %}
+    <div id="tabAtcd{{ m }}" class="tab-pane" role="tabpanel">
+      <div{% if config.secretariatPeutModifierAtcd == 'true' %} class="changeObserv"{% endif %}>
+        {% if page.atcdFormNames[m] %}
+          {{ f.formbuilder(page.atcdFormDatas[m] , page.atcdFormNames[m] , valFormLat ) }}
+        {% else %}
+          {{ f.formbuilder(page.atcdFormDatas['base'] , page.atcdFormNames['base'] , valFormLat ) }}
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+
+    <div id="tabLiens" class="tab-pane active col-md-12 p-0" role="tabpanel">
+      {# Liens familiaux #}
+      <div class="card">
+        <div class="card-header py-0 gras">Liens familiaux
+          <a class="btn btn-default btn-sm float-right m-1" role="button" href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/patient/relations/{{ page.patient.id }}/" title="Édition des relations">
+            <span class="fa fa-link" aria-hidden="true"></span>
+          </a>
+        </div>
+
+        <table class="table table-sm table-striped table-condensed table-hover small m-0">
+          <thead>
+            <tr>
+              <th></th>
+              <th>patient</th>
+              <th>ddn</th>
+              <th class="texteadroite">lien</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for v in page.liensFamiliaux %}
+              <tr>
+                <td>
+                  <a class="btn btn-default btn-sm" role="button" href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/patient/{{ v.patientID }}/" target="_blank">
+                    <span class="fa fa-folder-open" aria-hidden="true"></span>
+                  </a>
+                </td>
+                <td class="gras">{{ v.nom }} {{v.prenom }}</td>
+                <td>{{ v.ddn }}</td>
+                <td class="texteadroite">{{ v.typeRelation }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+</div>
+

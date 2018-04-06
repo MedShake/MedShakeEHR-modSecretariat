@@ -39,7 +39,8 @@ $p['page']['listPrats']=msSQL::sql2tabKey("SELECT p.id, p.module, odt.value as t
      LEFT JOIN objets_data as odp ON odp.toID=p.id AND odp.typeID='".$name2typeID['firstname']."' AND odp.outdated='' AND odp.deleted=''
      WHERE p.type='pro' AND p.name!='' AND p.module!='secretariat'", 'id');
 
-foreach($p['page']['listPrats'] as $v) {
+foreach($p['page']['listPrats'] as $k=>$v) {
+    $p['page']['listPrats'][$k]['secteur']=msConfiguration::getParameterValue('administratifSecteurHonoraires', $v);
     $p['page']['listModules'][]=$v['module'];
 }
 array_unique($p['page']['listModules']);
