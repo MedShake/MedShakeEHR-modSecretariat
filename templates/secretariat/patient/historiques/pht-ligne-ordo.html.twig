@@ -98,6 +98,9 @@
           <span class="fa fa-ellipsis-h" aria-hidden="true"></span>
         </button>
         <ul class="dropdown-menu dropdown-menu-right">
+          <li>
+            <span class="dropdown-header py-0">#{{ cs.id }} Ordonnance</span>
+          </li>
           <li class="d-inline-block d-lg-none">
             <a class="dropdown-item editOrdo">
               {% if cs.iconeType == 'update' and cs.fromID == user.id %}
@@ -145,15 +148,11 @@
             <li class="dropdown-divider d-inline-block d-lg-none"></li>
             <li>
               <a href="#" class="dropdown-item toggleImportant" data-objetID="{{ cs.id }}" data-importanceActu="{{ cs.important }}">
-                {% if cs.important == 'n' %}Rendre important{% else %}N'est plus important{% endif %}
+                {% if cs.important == 'n' %}Rendre important{% else %}Rendre non important{% endif %}
               </a>
             </li>
             <li>
               <a class="dropdown-item" data-toggle="modal" href="#alternatTitreModal">Compléter titre</a>
-            </li>
-            <li role="separator" class="dropdown-divider"></li>
-            <li class="disabled">
-              <a class="dropdown-item" href="#">#{{ cs.id }}</a>
             </li>
             <li role="separator" class="dropdown-divider"></li>
           {% endif %}
@@ -166,7 +165,6 @@
           <li>
             <a class="dropdown-item" href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/logs/historiquePrint/{{ cs.id }}/">Historique versions PDF générées</a>
           </li>
-          <li role="separator" class="dropdown-divider"></li>
           <li>
             <a class="dropdown-item" href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/makepdf/{{ page.patient.id }}/ordo/{{ cs.id }}/" target="_blank">Forcer impression par défaut</a>
           </li>
